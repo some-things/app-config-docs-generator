@@ -2,7 +2,11 @@ import { existsSync } from 'fs';
 
 import { git } from '.';
 
-export const clone = (repoPath: string, localPath: string, branch: string) => {
+export const clone = async (
+  repoPath: string,
+  localPath: string,
+  branch: string
+) => {
   console.log(`Cloning ${repoPath} branch ${branch} to ${localPath}`);
 
   if (existsSync(localPath)) {
@@ -12,7 +16,7 @@ export const clone = (repoPath: string, localPath: string, branch: string) => {
     return;
   }
 
-  git.clone(repoPath, localPath, { "--branch": branch }, (error) => {
+  await git.clone(repoPath, localPath, { "--branch": branch }, (error) => {
     if (error) throw error;
     console.log("Successfully cloned");
   });

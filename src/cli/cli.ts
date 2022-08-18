@@ -1,7 +1,7 @@
 import { Command } from 'commander';
 
 import { clean } from '../clean';
-import { clone } from '../git';
+import { generate } from '../generate';
 
 export const program = new Command();
 program
@@ -20,7 +20,7 @@ program
   .option("-p, --path <path>", "local path", "tmp")
   .option("-b, --branch <branch>", "git branch", "v2.3.0")
   .action((options) => {
-    clone(options.repository, options.path, options.branch);
+    generate(options.repository, options.path, options.branch);
   });
 
 program

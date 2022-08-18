@@ -29,6 +29,7 @@
   },
   "dependencies": {
     "commander": "^9.4.0",
-    "jshint": "^2.13.5"
+    "jshint": "^2.13.5",
+    "simple-git": "^3.12.0"
   }
 }

@@ -1,7 +1,7 @@
 import { Command } from 'commander';
 
-import { clone } from '../applicationRepositoy';
 import { clean } from '../clean';
+import { clone } from '../git';
 
 export const program = new Command();
 program
@@ -17,17 +17,16 @@ program
     "application Git repository URL",
     "https://github.com/mesosphere/kommander-applications"
   )
-  .option("-b, --branch <branch>", "git branch", "2.3.0")
+  .option("-p, --path <path>", "local path", "tmp")
+  .option("-b, --branch <branch>", "git branch", "v2.3.0")
   .action((options) => {
-    console.log(`
-    repository: ${options.repository}
-    branch: ${options.branch}`);
-    clone();
+    clone(options.repository, options.path, options.branch);
   });
 
 program
   .command("clean")
   .description("Remove all generated files")
-  .action(() => {
-    clean();
+  .option("-p, --path <path>", "local path", "./tmp")
+  .action((options) => {
+    clean(options.path);
   });

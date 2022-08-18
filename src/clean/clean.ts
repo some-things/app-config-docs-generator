@@ -1,9 +1,9 @@
 import { existsSync } from 'fs';
 import { rm } from 'fs/promises';
-import path from 'path';
+import { join } from 'path';
 
-export const clean = async () => {
-  const dirToClean = path.join(process.cwd(), "tmp");
+export const clean = async (path: string) => {
+  const dirToClean = join(process.cwd(), path);
 
   if (existsSync(dirToClean)) {
     console.log("Cleaning " + dirToClean);

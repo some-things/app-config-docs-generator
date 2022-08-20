@@ -1,5 +1,5 @@
 import { clone } from '../git';
-import { listApplications } from './repository';
+import { getApplicationHelmReleases } from './application';
 
 export const generate = async (
   repository: string,
@@ -7,5 +7,5 @@ export const generate = async (
   branch: string
 ) => {
   await clone(repository, path, branch);
-  await listApplications(path);
+  await getApplicationHelmReleases(path, "gatekeeper");
 };

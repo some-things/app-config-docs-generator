@@ -1,12 +1,17 @@
-import * as fs from 'fs/promises';
+import { readdir } from 'fs/promises';
 import path from 'path';
 
-export const listApplications = async (repositoryPath: string) => {
-  const appDirectories = await fs
-    .readdir(path.join(repositoryPath, "services"), {
+export const getRepositoryApplicationNames = async (
+  repositoryPath: string
+): Promise<string[]> => {
+  const applicationDirectories = await readdir(
+    path.join(repositoryPath, "services"),
+    {
       withFileTypes: true,
-    })
-    .then((f) => f.filter((f) => f.isDirectory()));
+    }
+  ).then((f) => f.filter((f) => f.isDirectory()));
 
-  console.log(appDirectories);
+  const applicationNames = applicationDirectories.map((d) => d.name);
+
+  return applicationNames;
 };

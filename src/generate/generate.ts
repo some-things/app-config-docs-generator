@@ -7,5 +7,5 @@ export const generate = async (
   branch: string
 ) => {
   await clone(repository, path, branch);
-  await getApplicationHelmReleases(path, "gatekeeer");
+  await getApplicationHelmReleases(path, "gatekeeper");
 };

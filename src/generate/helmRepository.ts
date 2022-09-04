@@ -27,9 +27,11 @@ export const getHelmRepositoryURL = async (
 
   const helmRepositories = yamlDocs.filter((y) => y.kind === "HelmRepository");
 
-  const helmRepositoryURL = helmRepositories.find(
-    (h) => h["metadata"]["name"] === helmRepository
-  )["spec"]["url"];
+  const helmRepositoryURL = helmRepositories
+    .find((h) => h["metadata"]["name"] === helmRepository)
+    ["spec"]["url"].split("=")
+    .pop()
+    .split("}")[0];
 
   console.log(`helm repo url: ${helmRepositoryURL}`);
 

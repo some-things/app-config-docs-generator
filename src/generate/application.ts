@@ -3,13 +3,15 @@ import path from 'path';
 import recursiveReadDir from 'recursive-readdir';
 import * as YAML from 'yaml';
 
-import { getRepositoryApplicationNames } from './repository';
+import { getApplicationRepositoryApplicationNames } from './applicationRepository';
 
 export const getApplicationHelmReleases = async (
   repositoryPath: string,
   applicationName: string
 ): Promise<Array<{}>> => {
-  const applicationNames = await getRepositoryApplicationNames(repositoryPath);
+  const applicationNames = await getApplicationRepositoryApplicationNames(
+    repositoryPath
+  );
 
   if (!applicationNames.includes(applicationName)) {
     throw new Error(`Application ${applicationName} not found`);
@@ -37,7 +39,13 @@ export const getApplicationHelmReleases = async (
 
   const helmReleases = yamlDocs.filter((y) => y.kind === "HelmRelease");
 
-  console.log(helmReleases);
+  helmReleases.forEach((h) => {
+    console.log(`
+      name: ${h["metadata"]["name"]}
+      repo: ${h["spec"]["chart"]["spec"]["sourceRef"]["name"]}
+      version: ${h["spec"]["chart"]["spec"]["version"]} 
+    `);
+  });
 
   return helmReleases;
 };

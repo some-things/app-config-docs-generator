@@ -19,8 +19,18 @@ program
   )
   .option("-p, --path <path>", "local path", "tmp")
   .option("-b, --branch <branch>", "git branch", "v2.3.0")
+  .option(
+    "-c, --helm-chart-repository-path <path>",
+    "helm chart repository path",
+    "tmp/common/helm-repositories"
+  )
   .action((options) => {
-    generate(options.repository, options.path, options.branch);
+    generate(
+      options.repository,
+      options.path,
+      options.branch,
+      options.helmChartRepositoryPath
+    );
   });
 
 program

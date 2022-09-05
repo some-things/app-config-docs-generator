@@ -1,5 +1,6 @@
 import { createWriteStream } from 'fs';
 import { get } from 'https';
+import { x } from 'tar';
 
 export const downloadHelmChart = (
   chartName: string,
@@ -22,4 +23,8 @@ export const downloadHelmChart = (
       console.log(`Downloaded ${chartFilename}`);
     });
   });
+};
+
+export const extractHelmChart = (chartFilePath: string) => {
+  x({ file: chartFilePath });
 };

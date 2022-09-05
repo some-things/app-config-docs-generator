@@ -1,20 +1,21 @@
 import { existsSync } from 'fs';
 
-import { git } from '.';
+import { git } from './client';
 
 export const clone = async (
   repoPath: string,
   localPath: string,
   branch: string
 ) => {
-  console.log(`Cloning ${repoPath} branch ${branch} to ${localPath}`);
-
   if (existsSync(localPath)) {
     // TODO: add prompt and/or flag to force overwrite
-    console.log(`${localPath} directory already exists, skipping clone`);
-    console.log(`Hint: Try running 'clean' first`);
+    console.log(
+      `Directory ${localPath} already exists, skipping clone (hint: try running 'clean' first)`
+    );
     return;
   }
+
+  console.log(`Cloning ${repoPath} branch ${branch} to ${localPath}`);
 
   await git.clone(repoPath, localPath, { "--branch": branch }, (error) => {
     if (error) throw error;

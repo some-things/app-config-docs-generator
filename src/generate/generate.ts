@@ -1,5 +1,6 @@
 import { clone } from '../git';
 import { getApplicationHelmReleases } from './application';
+import { downloadHelmChart } from './helmChart';
 import { getHelmRepositoryURL } from './helmRepository';
 
 export const generate = async (
@@ -10,8 +11,9 @@ export const generate = async (
 ) => {
   await clone(repository, path, branch);
   await getApplicationHelmReleases(path, "gatekeeper");
-  await getHelmRepositoryURL(
+  const helmRepositoryURL = await getHelmRepositoryURL(
     helmChartRepositoryPath,
     "open-policy-agent.github.io-charts"
   );
+  downloadHelmChart("gatekeeper", "3.8.1", helmRepositoryURL);
 };

@@ -33,7 +33,7 @@ export const getHelmRepositoryURL = async (
     .pop()
     .split("}")[0];
 
-  console.log(`helm repo url: ${helmRepositoryURL}`);
+  // console.log(`helm repo url: ${helmRepositoryURL}`);
 
   return helmRepositoryURL;
 };

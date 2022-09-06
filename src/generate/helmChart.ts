@@ -34,6 +34,7 @@ export const generateHelmChartDoc = async (
 
   console.log(`Pulling image ${helmDocsImage}`);
   const pullStream = await docker.pull(helmDocsImage);
+
   console.log("Waiting for image pull to complete");
   await new Promise((res) => docker.modem.followProgress(pullStream, res));
   console.log("Successfully pulled helm-docs image");
@@ -58,16 +59,10 @@ export const generateHelmChartDoc = async (
 
 {{ template "chart.valuesSection" . }}
 
-### **NOTE:** The values above represent those defined in the default chart values.yaml file. For any additional configurable values, please analyze the chart: ${chartURL.replace(
-    `//${chartName}`,
-    `/${chartName}`
-  )}
-
+### **NOTE:** The values above represent those defined in the chart's default values.yaml file. For any additional configurable values, please download and analyze the chart: ${chartURL}
   `;
-
   await writeFile("README-d2iq.md.gotmpl", templateFileContents);
 
-  // TODO: template chart URL into the README for further user analysis
   await docker.run(helmDocsImage, [], process.stdout, {
     name: "helm-docs",
     Hostname: "helm-docs",
@@ -76,6 +71,7 @@ export const generateHelmChartDoc = async (
       "README-d2iq.md",
       "--template-files",
       "README-d2iq.md.gotmpl",
+      "--document-dependency-values",
     ],
     User: userInfo().uid.toString(),
     Tty: false,
@@ -84,6 +80,7 @@ export const generateHelmChartDoc = async (
       "README-d2iq.md",
       "--template-files",
       "README-d2iq.md.gotmpl",
+      "--document-dependency-values",
     ],
     Env: [`CHART_URL=${chartURL}`],
     HostConfig: {

@@ -39,13 +39,5 @@ export const getApplicationHelmReleases = async (
 
   const helmReleases = yamlDocs.filter((y) => y.kind === "HelmRelease");
 
-  helmReleases.forEach((h) => {
-    console.log(`
-      name: ${h["metadata"]["name"]}
-      repo: ${h["spec"]["chart"]["spec"]["sourceRef"]["name"]}
-      version: ${h["spec"]["chart"]["spec"]["version"]} 
-    `);
-  });
-
   return helmReleases;
 };

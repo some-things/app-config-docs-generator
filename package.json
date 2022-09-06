@@ -21,6 +21,7 @@
   },
   "homepage": "https://github.com/some-things/app-config-docs-generator#readme",
   "devDependencies": {
+    "@types/axios": "^0.14.0",
     "@types/dockerode": "^3.3.9",
     "@types/download": "^8.0.1",
     "@types/js-yaml": "^4.0.5",
@@ -34,6 +35,7 @@
     "typescript": "^4.7.4"
   },
   "dependencies": {
+    "axios": "^0.27.2",
     "commander": "^9.4.0",
     "dockerode": "^3.3.4",
     "download": "^8.0.0",

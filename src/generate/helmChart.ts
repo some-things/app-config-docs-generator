@@ -1,10 +1,13 @@
+import axios from 'axios';
 import download from 'download';
 import { writeFile } from 'fs/promises';
 import { userInfo } from 'os';
 import { join } from 'path';
 import { cwd } from 'process';
 import { x } from 'tar';
+import * as YAML from 'yaml';
 
+import { isValidUrl } from '../utils/helpers';
 import docker from './docker';
 
 export const downloadHelmChart = async (
@@ -14,11 +17,34 @@ export const downloadHelmChart = async (
 ) => {
   // TODO: make sure // doesn't break things here
   const chartFilename = `${chartName}-${chartVersion}.tgz`;
-  const chartURL = `${chartRepoURL}/${chartFilename}`;
+  const chartRepoURLObject = (() => {
+    const url = new URL(chartRepoURL);
+    return url;
+  })();
 
-  console.log(`Downloading ${chartURL}`);
+  console.log(`processing chart repo ${chartRepoURL}`);
 
-  await download(chartURL, cwd());
+  const chartRepoIndex = await (
+    await axios.get(`${chartRepoURL}/index.yaml`)
+  ).data;
+
+  const chartRepoIndexData = YAML.parse(chartRepoIndex);
+
+  const chartURLs = chartRepoIndexData["entries"][`${chartName}`].filter(
+    (c: any) => c.version === chartVersion && c.name === chartName
+  )[0]["urls"];
+
+  const chartFetchURL = isValidUrl(chartURLs[0])
+    ? chartURLs[0]
+    : `${chartRepoURL}/${chartURLs[0]}`;
+
+  try {
+    await download(chartFetchURL, cwd());
+  } catch (e) {
+    console.error(`failed to download ${chartFetchURL}: ${e}`);
+  }
+
+  return;
 };
 
 export const extractHelmChart = async (chartFilePath: string) => {

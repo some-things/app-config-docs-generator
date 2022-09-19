@@ -205,3 +205,5 @@ tmp/
 gatekeeper*
 README*.md.gotmpl
 *container.json
+work/
+generated/

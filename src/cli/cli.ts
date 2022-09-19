@@ -4,6 +4,7 @@ import { clean } from '../clean';
 import { generate } from '../generate';
 
 export const program = new Command();
+
 program
   .name("app-config-docs-generator")
   .description("CLI to generate app config documentation")
@@ -17,26 +18,32 @@ program
     "application Git repository URL",
     "https://github.com/mesosphere/kommander-applications"
   )
-  .option("-p, --path <path>", "local path", "tmp")
+  // .option("-p, --path <path>", "local path", "./tmp")
   .option("-b, --branch <branch>", "git branch", "v2.3.0")
   .option(
     "-c, --helm-chart-repository-path <path>",
-    "helm chart repository path",
-    "tmp/common/helm-repositories"
+    "local helm chart repository path",
+    "common/helm-repositories"
   )
-  .action((options) => {
-    generate(
+  // TODO: fix this so everything doesn't get dumped into the working directory
+  .option("-w, --work-dir <path>", "work directory", "./work")
+  .option("-g, --generated-path <path>", "generated files path", "./generated")
+  .action(async (options) => {
+    await generate(
       options.repository,
-      options.path,
+      // options.path,
       options.branch,
-      options.helmChartRepositoryPath
+      options.helmChartRepositoryPath,
+      options.workDir,
+      options.generatedPath
     );
   });
 
 program
   .command("clean")
-  .description("Remove all generated files")
-  .option("-p, --path <path>", "local path", "./tmp")
-  .action((options) => {
-    clean(options.path);
+  .description(
+    "Remove all artifacts and generated files from the current directory"
+  )
+  .action(async () => {
+    await clean();
   });

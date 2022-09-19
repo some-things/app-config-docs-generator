@@ -2,8 +2,7 @@ import axios from 'axios';
 import download from 'download';
 import { writeFile } from 'fs/promises';
 import { userInfo } from 'os';
-import { join } from 'path';
-import { cwd } from 'process';
+import { join, resolve } from 'path';
 import { x } from 'tar';
 import * as YAML from 'yaml';
 
@@ -13,15 +12,9 @@ import docker from './docker';
 export const downloadHelmChart = async (
   chartName: string,
   chartVersion: string,
-  chartRepoURL: string
+  chartRepoURL: string,
+  path: string
 ) => {
-  // TODO: make sure // doesn't break things here
-  const chartFilename = `${chartName}-${chartVersion}.tgz`;
-  const chartRepoURLObject = (() => {
-    const url = new URL(chartRepoURL);
-    return url;
-  })();
-
   console.log(`processing chart repo ${chartRepoURL}`);
 
   const chartRepoIndex = await (
@@ -39,7 +32,7 @@ export const downloadHelmChart = async (
     : `${chartRepoURL}/${chartURLs[0]}`;
 
   try {
-    await download(chartFetchURL, cwd());
+    await download(chartFetchURL, path);
   } catch (e) {
     console.error(`failed to download ${chartFetchURL}: ${e}`);
   }
@@ -47,14 +40,22 @@ export const downloadHelmChart = async (
   return;
 };
 
-export const extractHelmChart = async (chartFilePath: string) => {
-  await x({ file: chartFilePath });
+export const extractHelmChart = async (
+  chartFilePath: string,
+  artifactsLocalPath: string
+) => {
+  await x({
+    file: join(artifactsLocalPath, chartFilePath),
+    C: artifactsLocalPath,
+  });
 };
 
 // https://github.com/norwoodj/helm-docs/blob/master/pkg/document/template.go
 export const generateHelmChartDoc = async (
   chartName: string,
-  chartURL: string
+  chartURL: string,
+  artifactsLocalPath: string,
+  generatedPath: string
 ) => {
   const helmDocsImage = "jnorwood/helm-docs:latest";
 
@@ -87,7 +88,10 @@ export const generateHelmChartDoc = async (
 
 ### **NOTE:** The values above represent those defined in the chart's default values.yaml file. For any additional configurable values, please download and analyze the chart: ${chartURL}
   `;
-  await writeFile("README-d2iq.md.gotmpl", templateFileContents);
+  await writeFile(
+    join(artifactsLocalPath, "README-d2iq.md.gotmpl"),
+    templateFileContents
+  );
 
   await docker.run(helmDocsImage, [], process.stdout, {
     name: "helm-docs",
@@ -103,7 +107,7 @@ export const generateHelmChartDoc = async (
     Tty: false,
     Cmd: [
       "--output-file",
-      "README-d2iq.md",
+      `generated/${chartName}-README-d2iq.md`,
       "--template-files",
       "README-d2iq.md.gotmpl",
       "--document-dependency-values",
@@ -117,11 +121,11 @@ export const generateHelmChartDoc = async (
       },
       NetworkMode: "default",
       Binds: [
-        `${join(cwd(), chartName)}:/helm-docs`,
-        `${join(
-          cwd(),
-          "README-d2iq.md.gotmpl"
+        `${resolve(join(artifactsLocalPath, chartName))}:/helm-docs`,
+        `${resolve(
+          join(artifactsLocalPath, "README-d2iq.md.gotmpl")
         )}:/helm-docs/README-d2iq.md.gotmpl`,
+        `${resolve(generatedPath)}:/helm-docs/generated`,
       ],
     },
     Image: helmDocsImage,

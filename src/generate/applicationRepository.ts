@@ -1,11 +1,11 @@
 import { readdir } from 'fs/promises';
-import path from 'path';
+import { join } from 'path';
 
 export const getApplicationRepositoryApplicationNames = async (
   repositoryPath: string
 ): Promise<string[]> => {
   const applicationDirectories = await readdir(
-    path.join(repositoryPath, "services"),
+    join(repositoryPath, "services"),
     {
       withFileTypes: true,
     }

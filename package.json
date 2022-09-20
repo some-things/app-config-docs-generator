@@ -2,12 +2,16 @@
   "name": "app-config-docs-generator",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "dist/index.js",
+  "bin": {
+    "app-config-docs-generator": "dist/index.js"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start:dev": "node dist/index.js",
     "build": "rimraf ./dist && tsc",
-    "start": "npm run build && node dist/index.js"
+    "start": "npm run build && node dist/index.js",
+    "release": "rimraf ./dist && rimraf ./release && tsc && pkg package.json"
   },
   "repository": {
     "type": "git",
@@ -45,5 +49,15 @@
     "simple-git": "^3.12.0",
     "tar": "^6.1.11",
     "yaml": "^2.1.1"
+  },
+  "pkg": {
+    "outputPath": "release/",
+    "assets": [
+      "node_modules/**/*"
+    ],
+    "targets": [
+      "node16-linux-x64",
+      "node16-macos-x64"
+    ]
   }
 }

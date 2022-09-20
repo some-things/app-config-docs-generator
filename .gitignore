@@ -207,3 +207,4 @@ README*.md.gotmpl
 *container.json
 work/
 generated/
+release/

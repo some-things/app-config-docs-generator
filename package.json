@@ -1,6 +1,6 @@
 {
   "name": "app-config-docs-generator",
-  "version": "1.0.0",
+  "version": "v1.0.0",
   "description": "",
   "main": "dist/index.js",
   "bin": {

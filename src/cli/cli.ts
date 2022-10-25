@@ -8,7 +8,7 @@ export const program = new Command();
 program
   .name("app-config-docs-generator")
   .description("CLI to generate app config documentation")
-  .version("1.0.0");
+  .version("v1.0.0");
 
 program
   .command("generate")

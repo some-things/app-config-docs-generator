@@ -15,10 +15,12 @@ export const downloadHelmChart = async (
   chartRepoURL: string,
   path: string
 ) => {
-  console.log(`processing chart repo ${chartRepoURL}`);
+  const filteredChartRepoURL = chartRepoURL.replace(/\/$/, "");
+
+  console.log(`processing chart repo ${filteredChartRepoURL}`);
 
   const chartRepoIndex = await (
-    await axios.get(`${chartRepoURL}/index.yaml`)
+    await axios.get(`${filteredChartRepoURL}/index.yaml`)
   ).data;
 
   const chartRepoIndexData = YAML.parse(chartRepoIndex);
@@ -29,7 +31,7 @@ export const downloadHelmChart = async (
 
   const chartFetchURL = isValidUrl(chartURLs[0])
     ? chartURLs[0]
-    : `${chartRepoURL}/${chartURLs[0]}`;
+    : `${filteredChartRepoURL}/${chartURLs[0]}`;
 
   try {
     await download(chartFetchURL, path);
